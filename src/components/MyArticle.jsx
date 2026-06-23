@@ -9,4 +9,5 @@ function MyArticle({ title, desc }) {
     </section>
   );
 }
+
 export default MyArticle;
