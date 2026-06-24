@@ -32,17 +32,29 @@ function App() {
   let _desc = null;
   let _article = null;
 
+  const handleDelete = () => {
+    if (window.confirm("정말 삭제할까요")) {
+      setContent(prev => prev.filter(item => item.id !== id));
+      setMode("welcome");
+    } else {
+      setMode("welcome");
+    }
+  };
+
   if (mode === "welcome") {
     _title = welcome.title;
     _desc = welcome.desc;
     _article = <MyArticle title={_title} desc={_desc} />;
   } else if (mode === "read") {
     const selected = content.find(c => c.id === id);
+
     console.log(selected);
+
     if (selected) {
       _title = selected.title;
       _desc = selected.desc;
     }
+
     _article = (
       <MyArticle
         title={_title}
@@ -50,6 +62,7 @@ function App() {
         onChangeMode={() => {
           setMode("update");
         }}
+        onDelete={handleDelete}
       />
     );
   } else if (mode === "create") {
@@ -59,6 +72,7 @@ function App() {
           const newId = maxId + 1;
 
           let _contents = content.concat({ id: newId, title: _title, desc: _desc });
+
           setContent(_contents);
           setMaxid(newId);
           setId(newId);
@@ -68,6 +82,7 @@ function App() {
     );
   } else if (mode === "update") {
     const selected = content.find(c => c.id === id);
+
     if (!selected) return null;
 
     _article = (
