@@ -1,6 +1,5 @@
 function Controls({ onChangeMode }) {
   console.log("Controls render");
-
   return (
     <div className="menu">
       <button
@@ -13,5 +12,4 @@ function Controls({ onChangeMode }) {
     </div>
   );
 }
-
 export default Controls;

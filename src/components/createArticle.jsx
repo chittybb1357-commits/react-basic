@@ -1,6 +1,5 @@
 function CreateArticle({ onSubmit }) {
   console.log("CreateArticle render");
-
   return (
     <>
       <h2>Create Article</h2>
@@ -24,5 +23,4 @@ function CreateArticle({ onSubmit }) {
     </>
   );
 }
-
 export default CreateArticle;

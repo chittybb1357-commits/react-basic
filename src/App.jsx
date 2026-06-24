@@ -5,6 +5,7 @@ import MyArticle from "./components/MyArticle";
 import { useState, useCallback } from "react";
 import Controls from "./components/controls";
 import CreateArticle from "./components/createArticle";
+import UpdateArticle from "./components/UpdateArticle";
 
 function App() {
   console.log("App render");
@@ -24,6 +25,7 @@ function App() {
     { id: 3, title: "애니메이션 구현", desc: "상태 변화에 따른 자연스럽고 동적인 화면 효과 구현" },
   ]);
   const [maxId, setMaxid] = useState(3);
+
   const welcome = { title: "welcome", desc: "Welcome to react" };
 
   let _title = null;
@@ -36,14 +38,20 @@ function App() {
     _article = <MyArticle title={_title} desc={_desc} />;
   } else if (mode === "read") {
     const selected = content.find(c => c.id === id);
-
     console.log(selected);
-
     if (selected) {
       _title = selected.title;
       _desc = selected.desc;
     }
-    _article = <MyArticle title={_title} desc={_desc} />;
+    _article = (
+      <MyArticle
+        title={_title}
+        desc={_desc}
+        onChangeMode={() => {
+          setMode("update");
+        }}
+      />
+    );
   } else if (mode === "create") {
     _article = (
       <CreateArticle
@@ -51,9 +59,33 @@ function App() {
           const newId = maxId + 1;
 
           let _contents = content.concat({ id: newId, title: _title, desc: _desc });
-
           setContent(_contents);
           setMaxid(newId);
+          setId(newId);
+          setMode("read");
+        }}
+      />
+    );
+  } else if (mode === "update") {
+    const selected = content.find(c => c.id === id);
+    if (!selected) return null;
+
+    _article = (
+      <UpdateArticle
+        title={selected.title}
+        desc={selected.desc}
+        onSubmit={(_title, _desc) => {
+          let _content = content.map(c =>
+            c.id === id
+              ? {
+                  ...c,
+                  title: _title,
+                  desc: _desc,
+                }
+              : c,
+          );
+          setContent(_content);
+          setMode("read");
         }}
       />
     );
@@ -73,7 +105,17 @@ function App() {
           setMode("welcome");
         }}
       />
-
+      {/* <header>
+        <h1
+          className="logo"
+          onClick={() => {
+            setMode("welcome");
+          }}
+        >
+          {subject.title}
+        </h1>
+        <p>{subject.desc}</p>
+      </header> */}
       <Nav data={content} onChangeMode={handleChangeMode} />
       {_article}
       <hr />
