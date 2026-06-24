@@ -8,8 +8,6 @@ import CreateArticle from "./components/createArticle";
 import UpdateArticle from "./components/UpdateArticle";
 import { v4 as uuidv4 } from "uuid";
 
-// 수정
-
 function App() {
   console.log("App render");
   const [id, setId] = useState("1");
