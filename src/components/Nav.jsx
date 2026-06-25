@@ -1,7 +1,7 @@
 //Nav 컴포넌트
 import { memo } from "react";
 
-const Nav = memo(function Nav({ data, id, onChangeMode }) {
+const Nav = memo(function Nav({ id, data, onChangeMode }) {
   console.log("Nav render");
   const lists = data.map(d => (
     <li key={d.id} className="nav-item">
