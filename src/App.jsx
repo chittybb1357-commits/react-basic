@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 
 function App() {
   console.log("App render");
-  const [id, setId] = useState("1");
+  const [id, setId] = useState(1);
   const [mode, setMode] = useState("welcome");
   const [subject, setSubject] = useState({
     title: "프론트엔드 개발자",
@@ -54,74 +54,75 @@ function App() {
     setMode("welcome");
   };
 
-  if (mode === "welcome") {
-    _title = welcome.title;
-    _desc = welcome.desc;
-    _article = <MyArticle title={_title} desc={_desc} />;
-  } else if (mode === "read") {
-    if (selectedArticle) {
-      _title = selectedArticle.title;
-      _desc = selectedArticle.desc;
-      _difficulty = selectedArticle.difficulty;
+  const handleSubmitCreate = (_title, _desc, _difficulty) => {
+    const newId = uuidv4();
+
+    let _contents = content.concat({
+      id: newId,
+      title: _title,
+      desc: _desc,
+      difficulty: _difficulty,
+    });
+
+    setContent(_contents);
+    // setMaxid(newId);
+    setId(newId);
+    setMode("read");
+  };
+
+  const handleSubmitUpdate = (_title, _desc, _difficulty) => {
+    setContent(prev =>
+      prev.map(p =>
+        p.id === id
+          ? {
+              ...p,
+              title: _title,
+              desc: _desc,
+              difficulty: _difficulty,
+            }
+          : p,
+      ),
+    );
+    setMode("read");
+  };
+
+  const renderArticle = () => {
+    switch (mode) {
+      case "read":
+        return (
+          <MyArticle
+            title={selectedArticle?.title ?? welcome.title}
+            desc={selectedArticle?.desc ?? welcome.desc}
+            difficulty={selectedArticle?.difficulty ?? welcome.difficulty}
+            onChangeMode={() => {
+              setMode("update");
+            }}
+            onDelete={handleDelete}
+          />
+        );
+        break;
+
+      case "create":
+        return <CreateArticle onSubmit={handleSubmitCreate} />;
+        break;
+
+      case "update":
+        return (
+          <UpdateArticle
+            key={id}
+            title={selectedArticle.title}
+            desc={selectedArticle.desc}
+            difficulty={selectedArticle.difficulty}
+            onSubmit={handleSubmitUpdate}
+          />
+        );
+        break;
+
+      default: // welcome
+        return <MyArticle title={_title} desc={_desc} />;
+        break;
     }
-    _article = (
-      <MyArticle
-        title={_title}
-        desc={_desc}
-        difficulty={_difficulty}
-        onChangeMode={() => {
-          setMode("update");
-        }}
-        onDelete={handleDelete}
-      />
-    );
-  } else if (mode === "create") {
-    _article = (
-      <CreateArticle
-        onSubmit={(_title, _desc, _difficulty) => {
-          const newId = uuidv4();
-
-          let _contents = content.concat({
-            id: newId,
-            title: _title,
-            desc: _desc,
-            difficulty: _difficulty,
-          });
-
-          setContent(_contents);
-          // setMaxid(newId);
-          setId(newId);
-          setMode("read");
-        }}
-      />
-    );
-  } else if (mode === "update") {
-    if (!selectedArticle) return null;
-
-    _article = (
-      <UpdateArticle
-        key={id}
-        title={selectedArticle.title}
-        desc={selectedArticle.desc}
-        difficulty={selectedArticle.difficulty}
-        onSubmit={(_title, _desc, _difficulty) => {
-          setContent(prev =>
-            prev.map(p =>
-              p.id === id
-                ? {
-                    ...p,
-                    title: _title,
-                    desc: _desc,
-                    difficulty: _difficulty,
-                  }
-                : p,
-            ),
-          );
-          setMode("read");
-        }}
-      />
-    );
-  }
+  };
 
   const handleChangeMode = useCallback(_id => {
     console.log(_id);
@@ -139,19 +140,8 @@ function App() {
           setMode("welcome");
         }}
       />
-      {/* <header>
-        <h1
-          className="logo"
-          onClick={() => {
-            setMode("welcome");
-          }}
-        >
-          {subject.title}
-        </h1>
-        <p>{subject.desc}</p>
-      </header> */}
-      <Nav data={content} onChangeMode={handleChangeMode} />
-      {_article}
+      <Nav data={content} id={id} onChangeMode={handleChangeMode} />
+      {renderArticle()}
       <hr />
       <Controls
         onChangeMode={() => {

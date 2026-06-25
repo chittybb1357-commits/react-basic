@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function ArticleForm(initTitle = "", initDesc = "", initDifficulty = "", onSubmit) {
+function ArticleForm({ initTitle = "", initDesc = "", initDifficulty = "", onSubmit }) {
   const [content, setContent] = useState({
     title: initTitle,
     desc: initDesc,
